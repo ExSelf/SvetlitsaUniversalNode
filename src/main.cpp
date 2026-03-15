@@ -5,6 +5,9 @@
 #include <ArduinoOTA.h>
 #include <ESPmDNS.h>
 
+// Node specific includes
+#include "solaris.c"
+
 uint8_t NodeNum = 0;
 
 void OTAbegin();
@@ -26,10 +29,8 @@ Serial.println(NodeNum);
 void loop() {
   ArduinoOTA.handle();
 
-  // Serial.printf("Node Number: %d\n", NodeNum);
-  // delay(1000);
 
-  handleNIDI(NodeNum);
+  handleMIDI(NodeNum);
 }
 
 void OTAbegin() {

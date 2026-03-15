@@ -1,8 +1,8 @@
 void SolarisMIDI() {
-    switch (command) {
+ /*   switch (command) {
 
     /////////////////////////////// MIDI ///////////////////////////////
-/*
+
     // OFF
     case 12:
       OnOff(false);
