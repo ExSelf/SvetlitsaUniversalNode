@@ -1,14 +1,16 @@
 #include <string.h>
 
+#include "solaris.c"
+
 uint16_t NodeSpecificConstant(uint8_t nodeNumber, char *constantName) {
     if (nodeNumber < 10) {
 
-    } else if (nodeNumber < 20) { //Solaris
+    } else if (nodeNumber < 20) { //Origami
+
+    } else if (nodeNumber < 30) { // Solaris
         if (strcmp(constantName, "VOLTAGE_INDEXER") == 0) {
             return 730;
         }
-    } else if (nodeNumber < 30) {
-
     } else if (nodeNumber < 40) {
 
     } else if (nodeNumber < 50) {

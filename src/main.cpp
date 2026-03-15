@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include <constants.c>
+#include <node_specific_constants.c>
 #include <esp_now.h>
 #include <ArduinoOTA.h>
 #include <ESPmDNS.h>
@@ -7,6 +8,7 @@
 uint8_t NodeNum = 0;
 
 void OTAbegin();
+void handleMIDI(uint8_t nodeNumber);
 
 void setup() {
 Serial.begin(115200);
@@ -24,8 +26,10 @@ Serial.println(NodeNum);
 void loop() {
   ArduinoOTA.handle();
 
-  Serial.printf("Node Number: %d\n", NodeNum);
-  delay(1000);
+  // Serial.printf("Node Number: %d\n", NodeNum);
+  // delay(1000);
+
+  handleNIDI(NodeNum);
 }
 
 void OTAbegin() {
@@ -66,4 +70,28 @@ void OTAbegin() {
   });
 
   ArduinoOTA.begin();
+}
+
+void handleMIDI(uint8_t nodeNumber) {
+    if (nodeNumber < 10) {
+
+    } else if (nodeNumber < 20) { //Origami
+
+    } else if (nodeNumber < 30) { // Solaris
+      SolarisMIDI();
+    } else if (nodeNumber < 40) {
+
+    } else if (nodeNumber < 50) {
+
+    } else if (nodeNumber < 60) {
+
+    } else if (nodeNumber < 70) {
+
+    } else if (nodeNumber < 80) {
+
+    } else if (nodeNumber < 90) {
+
+    } else if (nodeNumber < 100) {
+
+    }
 }
