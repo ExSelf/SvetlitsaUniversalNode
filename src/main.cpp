@@ -3,6 +3,7 @@
 
 #include "NodeSpecific/Solaris.c"
 #include "NodeSpecific/Origami.c"
+#include "NodeSpecific/MoonFaced.c"
 
 // Node specific includes
 #include "SUN.h"
