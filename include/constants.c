@@ -4,7 +4,7 @@ const uint8_t NodeNumber[8] = {39, 40, 37, 38, 18, 21, 16, 17};
 const char* ssid = "ExSelf";
 const char* password = "gggggggggg";
 
-const char* hostname = "s2mini";
+char* hostName;
 
 uint8_t command;
 uint8_t parameter;

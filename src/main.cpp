@@ -1,36 +1,34 @@
 #include <Arduino.h>
 #include <constants.c>
-#include <node_specific_constants.c>
 #include <esp_now.h>
 #include <ArduinoOTA.h>
 #include <ESPmDNS.h>
 
 // Node specific includes
-#include "solaris.c"
+#include "SUN.h"
 
-uint8_t NodeNum = 0;
+uint8_t NodeNumber = 0;
 
 void OTAbegin();
-void handleMIDI(uint8_t nodeNumber);
+void handleMIDI(uint8_t NodeNumber);
 
 void setup() {
 Serial.begin(115200);
 
 for (int i = 0; i < 8; i++) {
     pinMode(NodeNumber[i], INPUT_PULLUP);
-
     NodeNum += (!digitalRead(NodeNumber[i]) * pow(2, i));
   }
 
 OTAbegin();
-Serial.println(NodeNum);
+Serial.println(NodeNumber);
 }
 
 void loop() {
   ArduinoOTA.handle();
 
 
-  handleMIDI(NodeNum);
+  handleMIDI(NodeNumber);
 }
 
 void OTAbegin() {
@@ -42,13 +40,13 @@ void OTAbegin() {
     Serial.print(".");
   }
   
-  if (!MDNS.begin(hostname)) {
+  if (!MDNS.begin(hostName)) {
     Serial.println("Error starting mDNS");
   } else {
     Serial.println("mDNS started");
   }
 
-  ArduinoOTA.setHostname(hostname);
+  ArduinoOTA.setHostname(hostName);
 
   Serial.println();
   Serial.print("Connected. IP: ");
@@ -73,26 +71,26 @@ void OTAbegin() {
   ArduinoOTA.begin();
 }
 
-void handleMIDI(uint8_t nodeNumber) {
-    if (nodeNumber < 10) {
+void handleMIDI(uint8_t NodeNumber) {
+    if (NodeNumber < 10) {
 
-    } else if (nodeNumber < 20) { //Origami
+    } else if (NodeNumber < 20) { //Origami
 
-    } else if (nodeNumber < 30) { // Solaris
+    } else if (NodeNumber < 30) { // Solaris
       SolarisMIDI();
-    } else if (nodeNumber < 40) {
+    } else if (NodeNumber < 40) {
 
-    } else if (nodeNumber < 50) {
+    } else if (NodeNumber < 50) {
 
-    } else if (nodeNumber < 60) {
+    } else if (NodeNumber < 60) {
 
-    } else if (nodeNumber < 70) {
+    } else if (NodeNumber < 70) {
 
-    } else if (nodeNumber < 80) {
+    } else if (NodeNumber < 80) {
 
-    } else if (nodeNumber < 90) {
+    } else if (NodeNumber < 90) {
 
-    } else if (nodeNumber < 100) {
+    } else if (NodeNumber < 100) {
 
     }
 }
