@@ -1,6 +1,13 @@
 #include "sun.h"
 #include <Arduino.h>
 
+#include "NodeSpecific/Origami.cpp"
+#include "NodeSpecific/Solaris.cpp"
+
+uint8_t charge;
+uint16_t voltage;
+uint16_t voltage_buffer[NUMBER_OF_READS];
+
 // Create global instance
 SUNClass SUN;
 
@@ -21,73 +28,27 @@ void SUNClass::setNodeCommand(uint8_t nodeNumber, uint8_t command, uint8_t param
     Serial.printf("Send command %d to node %d\n", command, nodeNumber);
 }
 
-uint8_t solarisGetInnerStripPixelsQuantity(uint8_t nodeNumber)
+void SUNClass::setupNode(uint8_t nodeNumber)
 {
-    switch (nodeNumber)
+    analogReadResolution(12);
+    uint8_t ADCPin = 0;
+
+    if (nodeNumber < 10) // Origami
     {
-    case 21:
-        return 50;
-
-    case 22:
-        return 50;
-
-    case 23:
-        return 50;
-
-    case 24:
-        return 50;
-
-    case 25:
-        return 50;
-
-    default:
-        return 0;
+        Origami.setupNode(nodeNumber);
     }
-}
-
-uint8_t solarisGetMiddleStripPixelsQuantity(uint8_t nodeNumber)
-{
-    switch (nodeNumber)
+    else if (nodeNumber < 20) // Solaris
     {
-    case 21:
-        return 50;
-
-    case 22:
-        return 50;
-
-    case 23:
-        return 50;
-
-    case 24:
-        return 50;
-
-    case 25:
-        return 50;
-
-    default:
-        return 0;
+        ADCPin = 5;
+        Solaris.setupNode(nodeNumber);
     }
-}
 
-uint8_t solarisGetOuterStripPixelsQuantity(uint8_t nodeNumber) {
-    switch (nodeNumber)
+    pinMode(ADCPin, INPUT);
+
+    // fill voltage buffer with initial values
+    uint16_t currentVoltage = analogRead(ADCPin);
+    for (int i = 0; i < NUMBER_OF_READS; i++)
     {
-    case 21:
-        return 98;
-
-    case 22:
-        return 98;
-
-    case 23:
-        return 98;
-
-    case 24:
-        return 98;
-
-    case 25:
-        return 98;
-
-    default:
-        return 0;
+        voltageBuffer[i] = currentVoltage * SUN.getVoltageIndexer(nodeNumber) / 100;
     }
 }

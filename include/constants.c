@@ -13,12 +13,3 @@ uint8_t constantCommands[12];
 #define VOLTAGE_CHECK_INTERVAL 10
 #define STATUS_SEND_INTERVAL 25
 #define NUMBER_OF_READS 100
-
-
-// Origami Specific constants
-
-
-// Solaris specific constants
-#define SOLARIS_BREATHE_INTERVAL_1 250
-#define SOLARIS_BREATHE_INTERVAL_2 2500
-#define SOLARIS_BUTTON_PRESS_DELAY 750

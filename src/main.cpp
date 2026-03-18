@@ -25,6 +25,8 @@ void setup()
     NodeNumber += (!digitalRead(NodeNumberPins[i]) * pow(2, i));
   }
 
+  SUN.setupNode(NodeNumber);
+
   OTAbegin();
   Serial.println(NodeNumber);
 }
