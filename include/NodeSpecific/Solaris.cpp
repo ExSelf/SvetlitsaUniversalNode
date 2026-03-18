@@ -1,3 +1,5 @@
+#include "Solaris.h"
+
 #define SOLARIS_BREATHE_INTERVAL_1 250
 #define SOLARIS_BREATHE_INTERVAL_2 2500
 #define SOLARIS_BUTTON_PRESS_DELAY 750
@@ -77,8 +79,6 @@ uint8_t getOuterStripPixelsQuantity(uint8_t nodeNumber)
 
 void setupNode(uint8_t nodeNumber)
 {
-  String host = "Solaris_" + String(nodeNumber);
-
   pinMode(INNER_PWM_PIN, OUTPUT);
   pinMode(MIDDLE_PWM_PIN, OUTPUT);
   pinMode(OUTER_PWM_PIN, OUTPUT);

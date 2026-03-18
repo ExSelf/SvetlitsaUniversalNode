@@ -1,5 +1,8 @@
 #include "sun.h"
 #include <Arduino.h>
+#include <esp_now.h>
+#include <ArduinoOTA.h>
+#include <ESPmDNS.h>
 
 #include "NodeSpecific/Origami.cpp"
 #include "NodeSpecific/Solaris.cpp"
@@ -33,15 +36,24 @@ void SUNClass::setupNode(uint8_t nodeNumber)
     analogReadResolution(12);
     uint8_t ADCPin = 0;
 
-    if (nodeNumber < 10) // Origami
+    if (nodeNumber > 10 && nodeNumber <= 20) // Origami
     {
         Origami.setupNode(nodeNumber);
     }
-    else if (nodeNumber < 20) // Solaris
+    else if (nodeNumber <= 30) // Solaris
     {
         ADCPin = 5;
         Solaris.setupNode(nodeNumber);
     }
+    else if (nodeNumber <= 40) // MoonFaced
+    {
+        ADCPin = 5;
+    }
+
+    WiFi.softAPdisconnect(true);
+    WiFi.mode(WIFI_STA);
+    WiFi.begin(ssid, password);
+    WiFi.hostname(SUN.getHostName(nodeNumber).c_str());
 
     pinMode(ADCPin, INPUT);
 
@@ -50,5 +62,66 @@ void SUNClass::setupNode(uint8_t nodeNumber)
     for (int i = 0; i < NUMBER_OF_READS; i++)
     {
         voltageBuffer[i] = currentVoltage * SUN.getVoltageIndexer(nodeNumber) / 100;
+    }
+}
+
+void SUNClass::OTAbegin(uint8_t nodeNumber)
+{
+    WiFi.begin(ssid, password);
+    Serial.print("Connecting");
+
+    while (WiFi.status() != WL_CONNECTED)
+    {
+        delay(500);
+        Serial.print(".");
+    }
+
+    if (!MDNS.begin(SUN.getHostName(nodeNumber).c_str()))
+    {
+        Serial.println("Error starting mDNS");
+    }
+    else
+    {
+        Serial.println("mDNS started");
+    }
+
+    ArduinoOTA.setHostname(SUN.getHostName(nodeNumber).c_str());
+
+    Serial.println();
+    Serial.print("Connected. IP: ");
+    Serial.println(WiFi.localIP());
+
+    ArduinoOTA.onStart([]()
+                       { Serial.println("OTA Start"); });
+
+    ArduinoOTA.onEnd([]()
+                     { Serial.println("\nOTA End"); });
+
+    ArduinoOTA.onProgress([](unsigned int progress, unsigned int total)
+                          { Serial.printf("Progress: %u%%\r", (progress * 100) / total); });
+
+    ArduinoOTA.onError([](ota_error_t error)
+                       { Serial.printf("Error[%u]\n", error); });
+
+    ArduinoOTA.begin();
+}
+
+string SUNClass::getHostName(uint8_t nodeNumber)
+{
+    if (nodeNumber < 20)
+    {
+        return "Origami_" + String(nodeNumber);
+    }
+    else if (nodeNumber < 30)
+    {
+        return "Solaris_" + String(nodeNumber % 10);
+    }
+    else if (nodeNumber < 40)
+    {
+        return "MoonFaced_" + String(nodeNumber % 10);
+    }
+    else
+    {
+        return "UnknownNode_" + String(nodeNumber % 10);
     }
 }
