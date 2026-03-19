@@ -1,5 +1,9 @@
 #include <Arduino.h>
 #include <ESPmDNS.h>
+#include <WiFi.h>
+#include <ArduinoOTA.h>
+
+#include "SUN.h"
 
 uint8_t charge;
 uint16_t voltage;
@@ -55,7 +59,7 @@ void SUNClass::setupNode(uint8_t nodeNumber)
     uint16_t currentVoltage = analogRead(ADCPin);
     for (int i = 0; i < NUMBER_OF_READS; i++)
     {
-        voltageBuffer[i] = currentVoltage * SUN.getVoltageIndexer(nodeNumber) / 100;
+        voltage_buffer[i] = currentVoltage * SUN.getVoltageIndexer(nodeNumber) / 100;
     }
 }
 

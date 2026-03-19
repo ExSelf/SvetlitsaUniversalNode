@@ -1,3 +1,6 @@
+#include <Arduino.h>
+#include "Solaris.h"
+
 #define SOLARIS_BREATHE_INTERVAL_1 250
 #define SOLARIS_BREATHE_INTERVAL_2 2500
 #define SOLARIS_BUTTON_PRESS_DELAY 750
@@ -7,7 +10,7 @@
 #define OUTER_PWM_PIN 4
 #define HANDS_PWM_PIN 6
 
-uint8_t getInnerStripPixelsQuantity(uint8_t nodeNumber)
+uint8_t SolarisClass::getInnerStripPixelsQuantity(uint8_t nodeNumber)
 {
   switch (nodeNumber)
   {
@@ -31,7 +34,7 @@ uint8_t getInnerStripPixelsQuantity(uint8_t nodeNumber)
   }
 }
 
-uint8_t getMiddleStripPixelsQuantity(uint8_t nodeNumber)
+uint8_t SolarisClass::getMiddleStripPixelsQuantity(uint8_t nodeNumber)
 {
   switch (nodeNumber)
   {
@@ -55,7 +58,7 @@ uint8_t getMiddleStripPixelsQuantity(uint8_t nodeNumber)
   }
 }
 
-uint8_t getOuterStripPixelsQuantity(uint8_t nodeNumber)
+uint8_t SolarisClass::getOuterStripPixelsQuantity(uint8_t nodeNumber)
 {
   switch (nodeNumber)
   {
@@ -79,10 +82,12 @@ uint8_t getOuterStripPixelsQuantity(uint8_t nodeNumber)
   }
 }
 
-void setupNode(uint8_t nodeNumber)
+void SolarisClass::setupNode(uint8_t nodeNumber)
 {
   pinMode(INNER_PWM_PIN, OUTPUT);
   pinMode(MIDDLE_PWM_PIN, OUTPUT);
   pinMode(OUTER_PWM_PIN, OUTPUT);
   pinMode(HANDS_PWM_PIN, OUTPUT);
 }
+
+SolarisClass Solaris;
