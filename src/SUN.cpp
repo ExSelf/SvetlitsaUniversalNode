@@ -53,6 +53,11 @@ void SUNClass::setupNode(uint8_t nodeNumber)
     WiFi.begin(ssid, password);
     WiFi.hostname(SUN.getHostName(nodeNumber).c_str());
 
+    Serial.print("Device is being configured as number ");
+    Serial.print(String(nodeNumber));
+    Serial.print(" with hostname ");
+    Serial.println(SUN.getHostName(nodeNumber));
+
     pinMode(ADCPin, INPUT);
 
     // fill voltage buffer with initial values
@@ -68,10 +73,17 @@ void SUNClass::OTAbegin(uint8_t nodeNumber)
     WiFi.begin(ssid, password);
     Serial.print("Connecting");
 
+    uint8_t retryCount = 0;
     while (WiFi.status() != WL_CONNECTED)
     {
         delay(500);
         Serial.print(".");
+        retryCount++;
+        if (retryCount > 10)
+        {
+            Serial.println("Failed to connect to WiFi");
+            break;
+        }
     }
 
     if (!MDNS.begin(SUN.getHostName(nodeNumber).c_str()))

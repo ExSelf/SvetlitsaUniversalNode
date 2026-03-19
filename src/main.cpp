@@ -20,7 +20,6 @@ void setup()
 
   SUN.setupNode(NodeNumber);
   SUN.OTAbegin(NodeNumber);
-  Serial.println(NodeNumber);
 }
 
 void loop()
@@ -30,6 +29,6 @@ void loop()
   if (millis() - lastCheckVoltage > VOLTAGE_CHECK_INTERVAL)
   {
     lastCheckVoltage = millis();
-    Serial.println(NodeNumber);
+    // Read voltage and update buffer
   }
 }
