@@ -1,11 +1,5 @@
-#include "sun.h"
 #include <Arduino.h>
-#include <esp_now.h>
-#include <ArduinoOTA.h>
 #include <ESPmDNS.h>
-
-#include "NodeSpecific/Origami.cpp"
-#include "NodeSpecific/Solaris.cpp"
 
 uint8_t charge;
 uint16_t voltage;
@@ -106,7 +100,7 @@ void SUNClass::OTAbegin(uint8_t nodeNumber)
     ArduinoOTA.begin();
 }
 
-string SUNClass::getHostName(uint8_t nodeNumber)
+String SUNClass::getHostName(uint8_t nodeNumber)
 {
     if (nodeNumber < 20)
     {

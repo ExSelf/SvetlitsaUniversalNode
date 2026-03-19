@@ -1,11 +1,9 @@
 #include <Arduino.h>
-#include <constants.c>
 
-#include "NodeSpecific/Solaris.c"
-#include "NodeSpecific/Origami.c"
-#include "NodeSpecific/MoonFaced.c"
+#include <esp_now.h>
+#include <ArduinoOTA.h>
 
-// Node specific includes
+// Include main class
 #include "SUN.h"
 
 uint8_t NodeNumber = 0;
@@ -28,4 +26,10 @@ void setup()
 void loop()
 {
   ArduinoOTA.handle();
+
+  if (millis() - lastCheckVoltage > VOLTAGE_CHECK_INTERVAL)
+  {
+    lastCheckVoltage = millis();
+    Serial.println(NodeNumber);
+  }
 }

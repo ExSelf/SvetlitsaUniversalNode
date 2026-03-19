@@ -10,6 +10,8 @@ uint8_t command;
 uint8_t parameter;
 uint8_t constantCommands[12];
 
+uint8_t lastCheckVoltage;
+
 #define VOLTAGE_CHECK_INTERVAL 10
 #define STATUS_SEND_INTERVAL 25
 #define NUMBER_OF_READS 100
