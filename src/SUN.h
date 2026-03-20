@@ -20,7 +20,7 @@ public:
     void setupNode(uint8_t nodeNumber);
     void OTAbegin(uint8_t nodeNumber);
     String getHostName(uint8_t nodeNumber);
-
+    uint8_t getADCPin(uint8_t nodeNumber);
 };
 
 extern SUNClass SUN;

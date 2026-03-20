@@ -20,15 +20,17 @@ void setup()
 
   SUN.setupNode(NodeNumber);
   SUN.OTAbegin(NodeNumber);
+
+  Serial.print("Configured and starting as ");
+  Serial.println(SUN.getHostName(NodeNumber));
 }
 
 void loop()
 {
   ArduinoOTA.handle();
 
-  if (millis() - lastCheckVoltage > VOLTAGE_CHECK_INTERVAL)
+  if (millis() - lastCheckVoltage > VOLTAGE_CHECK_INTERVAL * 100)
   {
     lastCheckVoltage = millis();
-    // Read voltage and update buffer
   }
 }

@@ -32,7 +32,6 @@ void SUNClass::setNodeCommand(uint8_t nodeNumber, uint8_t command, uint8_t param
 void SUNClass::setupNode(uint8_t nodeNumber)
 {
     analogReadResolution(12);
-    uint8_t ADCPin = 0;
 
     if (nodeNumber > 10 && nodeNumber <= 20) // Origami
     {
@@ -40,12 +39,11 @@ void SUNClass::setupNode(uint8_t nodeNumber)
     }
     else if (nodeNumber <= 30) // Solaris
     {
-        ADCPin = 5;
         Solaris.setupNode(nodeNumber);
     }
     else if (nodeNumber <= 40) // MoonFaced
     {
-        ADCPin = 5;
+        // MoonFaced.setupNode(nodeNumber);
     }
 
     WiFi.softAPdisconnect(true);
@@ -58,13 +56,19 @@ void SUNClass::setupNode(uint8_t nodeNumber)
     Serial.print(" with hostname ");
     Serial.println(SUN.getHostName(nodeNumber));
 
-    pinMode(ADCPin, INPUT);
+    pinMode(SUN.getADCPin(nodeNumber), INPUT);
 
     // fill voltage buffer with initial values
-    uint16_t currentVoltage = analogRead(ADCPin);
+    uint16_t currentVoltage = analogRead(SUN.getADCPin(nodeNumber));
     for (int i = 0; i < NUMBER_OF_READS; i++)
     {
         voltage_buffer[i] = currentVoltage * SUN.getVoltageIndexer(nodeNumber) / 100;
+    }
+
+    if (esp_now_init() != ESP_OK)
+    {
+        Serial.println("ESP-NOW init failed");
+        return;
     }
 }
 
@@ -133,5 +137,17 @@ String SUNClass::getHostName(uint8_t nodeNumber)
     else
     {
         return "UnknownNode_" + String(nodeNumber % 10);
+    }
+}
+
+uint8_t SUNClass::getADCPin(uint8_t nodeNumber)
+{
+    {
+        switch (nodeNumber)
+        {
+
+        default:
+            return 5;
+        }
     }
 }
