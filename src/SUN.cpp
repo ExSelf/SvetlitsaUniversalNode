@@ -5,7 +5,7 @@
 
 #include "SUN.h"
 
-uint8_t voltage_read;
+uint8_t voltageReadCounter = 0;
 uint16_t voltage;
 uint16_t voltage_buffer[NUMBER_OF_READS];
 
@@ -155,10 +155,10 @@ uint8_t SUNClass::getADCPin(uint8_t nodeNumber)
 
 uint8_t SUNClass::getCharge(uint8_t nodeNumber)
 {
-    voltage_read++;
-    if (voltage_read == NUMBER_OF_READS)
-        voltage_read = 0;
-    voltage_buffer[voltage_read] = analogRead(SUN.getADCPin(nodeNumber)) * SUN.getVoltageIndexer(nodeNumber) / 100;
+    voltageReadCounter++;
+    if (voltageReadCounter == NUMBER_OF_READS)
+        voltageReadCounter = 0;
+    voltage_buffer[voltageReadCounter] = analogRead(SUN.getADCPin(nodeNumber)) * SUN.getVoltageIndexer(nodeNumber) / 100;
 
     uint16_t total = 0;
     for (uint8_t i = 0; i < NUMBER_OF_READS; i++)

@@ -7,8 +7,7 @@
 #include "../src/NodeSpecific/Solaris.h"
 #include "../src/NodeSpecific/MoonFaced.h"
 
-extern uint8_t charge;
-extern uint8_t voltage_read;
+extern uint8_t voltageReadCounter;
 extern uint16_t voltage;
 extern uint16_t voltage_buffer[NUMBER_OF_READS];
 
