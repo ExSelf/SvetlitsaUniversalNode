@@ -8,6 +8,7 @@
 #include "../src/NodeSpecific/MoonFaced.h"
 
 extern uint8_t charge;
+extern uint8_t voltage_read;
 extern uint16_t voltage;
 extern uint16_t voltage_buffer[NUMBER_OF_READS];
 
@@ -21,6 +22,9 @@ public:
     void OTAbegin(uint8_t nodeNumber);
     String getHostName(uint8_t nodeNumber);
     uint8_t getADCPin(uint8_t nodeNumber);
+    uint8_t getCharge(uint8_t nodeNumber);
+    uint16_t getLowVoltage(uint8_t nodeNumber);
+    uint16_t getHighVoltage(uint8_t nodeNumber);
 };
 
 extern SUNClass SUN;

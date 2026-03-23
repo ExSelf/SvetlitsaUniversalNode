@@ -5,7 +5,7 @@
 
 #include "SUN.h"
 
-uint8_t charge;
+uint8_t voltage_read;
 uint16_t voltage;
 uint16_t voltage_buffer[NUMBER_OF_READS];
 
@@ -78,17 +78,18 @@ void SUNClass::OTAbegin(uint8_t nodeNumber)
     Serial.print("Connecting");
 
     uint8_t retryCount = 0;
-    while (WiFi.status() != WL_CONNECTED)
-    {
-        delay(500);
-        Serial.print(".");
-        retryCount++;
-        if (retryCount > 10)
-        {
-            Serial.println("Failed to connect to WiFi");
-            break;
-        }
-    }
+
+    // while (WiFi.status() != WL_CONNECTED)
+    // {
+    //     delay(500);
+    //     Serial.print(".");
+    //     retryCount++;
+    //     if (retryCount > 10)
+    //     {
+    //         Serial.println("Failed to connect to WiFi");
+    //         break;
+    //     }
+    // }
 
     if (!MDNS.begin(SUN.getHostName(nodeNumber).c_str()))
     {
@@ -149,5 +150,75 @@ uint8_t SUNClass::getADCPin(uint8_t nodeNumber)
         default:
             return 5;
         }
+    }
+}
+
+uint8_t SUNClass::getCharge(uint8_t nodeNumber)
+{
+    voltage_read++;
+    if (voltage_read == NUMBER_OF_READS)
+        voltage_read = 0;
+    voltage_buffer[voltage_read] = analogRead(SUN.getADCPin(nodeNumber)) * SUN.getVoltageIndexer(nodeNumber) / 100;
+
+    uint16_t total = 0;
+    for (uint8_t i = 0; i < NUMBER_OF_READS; i++)
+    {
+        total += voltage_buffer[i];
+    }
+    voltage = total / NUMBER_OF_READS;
+
+    uint8_t charge = constrain(map(voltage, SUN.getLowVoltage(nodeNumber), SUN.getHighVoltage(nodeNumber), 0, 100), 0, 100);
+
+    return charge;
+
+    //bright = constrain(map(charge, 0, SAFE_CHARGE, MIN_BRIGHT, MAX_BRIGHT), MIN_BRIGHT, MAX_BRIGHT);
+}
+
+uint16_t SUNClass::getLowVoltage(uint8_t nodeNumber)
+{
+    switch (nodeNumber)
+    {
+    case 21:
+        return 9000;
+
+    case 22:
+        return 9000;
+
+    case 23:
+        return 9000;
+
+    case 24:
+        return 9000;
+
+    case 25:
+        return 9000;
+
+    default:
+        return 0;
+    }
+}
+
+uint16_t SUNClass::getHighVoltage(uint8_t nodeNumber)
+{
+    switch (nodeNumber)
+    {
+
+    case 21:
+        return 12600;
+
+    case 22:
+        return 12600;
+
+    case 23:
+        return 12600;
+
+    case 24:
+        return 12600;
+
+    case 25:
+        return 12600;
+
+    default:
+        return 126000;
     }
 }
