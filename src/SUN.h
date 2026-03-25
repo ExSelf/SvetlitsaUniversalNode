@@ -1,7 +1,7 @@
 #pragma once
 #include <stdint.h>
 
-#include "constants.h"
+#include "definitions.h"
 
 #include "../src/NodeSpecific/Origami.h"
 #include "../src/NodeSpecific/Solaris.h"

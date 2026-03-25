@@ -10,6 +10,6 @@ extern uint8_t command;
 extern uint8_t parameter;
 extern uint8_t constantCommands[12];
 
-#define VOLTAGE_CHECK_INTERVAL 10
-#define STATUS_SEND_INTERVAL 25
-#define DEFAULT_WIFI_CHANNEL 13
+static constexpr uint8_t VOLTAGE_CHECK_INTERVAL = 10;
+static constexpr uint8_t STATUS_SEND_INTERVAL = 25;
+static constexpr uint8_t DEFAULT_WIFI_CHANNEL = 13;
