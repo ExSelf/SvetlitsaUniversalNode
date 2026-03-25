@@ -19,7 +19,6 @@ void setup()
   }
 
   SUN.setupNode(NodeNumber);
-  SUN.OTAbegin(NodeNumber);
 
   Serial.print("Configured and starting as ");
   Serial.println(SUN.getHostName(NodeNumber));
