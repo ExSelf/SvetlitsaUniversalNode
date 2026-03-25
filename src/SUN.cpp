@@ -1,13 +1,20 @@
 #include <Arduino.h>
 #include <ESPmDNS.h>
 #include <WiFi.h>
+#include <esp_now.h>
+#include <esp_wifi.h>
+
+#ifndef ARDUINO_OTA_H
 #include <ArduinoOTA.h>
+#endif
 
 #include "SUN.h"
 
 uint8_t voltageReadCounter = 0;
 uint16_t voltage;
 uint16_t voltageBuffer[256];
+
+unsigned long lastCheckVoltage = 0;
 
 // Create global instance
 SUNClass SUN;
@@ -48,6 +55,7 @@ void SUNClass::setupNode(uint8_t nodeNumber)
 
     WiFi.softAPdisconnect(true);
     WiFi.mode(WIFI_STA);
+    esp_wifi_set_channel(DEFAULT_WIFI_CHANNEL, WIFI_SECOND_CHAN_NONE);
     WiFi.begin(ssid, password);
     WiFi.hostname(SUN.getHostName(nodeNumber).c_str());
 
@@ -89,9 +97,9 @@ void SUNClass::setupNode(uint8_t nodeNumber)
 
     // fill voltage buffer with initial values
     uint16_t currentVoltage = analogRead(SUN.getADCPin(nodeNumber));
-    for (int i = 0; i < NUMBER_OF_READS; i++)
+    for (int i = 0; i < 256; i++)
     {
-        voltage_buffer[i] = currentVoltage * SUN.getVoltageIndexer(nodeNumber) / 100;
+        voltageBuffer[i] = currentVoltage * SUN.getVoltageIndexer(nodeNumber) / 100;
     }
 
     if (esp_now_init() != ESP_OK)
@@ -103,7 +111,7 @@ void SUNClass::setupNode(uint8_t nodeNumber)
 
 String SUNClass::getHostName(uint8_t nodeNumber)
 {
-    if (nodeNumber < 20)
+    if (nodeNumber >= 10 && nodeNumber < 20)
     {
         return "Origami_" + String(nodeNumber);
     }
@@ -197,6 +205,6 @@ uint16_t SUNClass::getHighVoltage(uint8_t nodeNumber)
         return 12600;
 
     default:
-        return 126000;
+        return 65535;
     }
 }

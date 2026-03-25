@@ -12,7 +12,5 @@ extern uint8_t command;
 extern uint8_t parameter;
 extern uint8_t constantCommands[12];
 
-extern unsigned long lastCheckVoltage = 0;
-
 #define VOLTAGE_CHECK_INTERVAL 10
 #define STATUS_SEND_INTERVAL 25
