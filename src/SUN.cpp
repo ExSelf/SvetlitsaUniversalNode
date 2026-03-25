@@ -51,46 +51,6 @@ void SUNClass::setupNode(uint8_t nodeNumber)
     WiFi.begin(ssid, password);
     WiFi.hostname(SUN.getHostName(nodeNumber).c_str());
 
-    Serial.print("Device is being configured as number ");
-    Serial.print(String(nodeNumber));
-    Serial.print(" with hostname ");
-    Serial.println(SUN.getHostName(nodeNumber));
-
-    pinMode(SUN.getADCPin(nodeNumber), INPUT);
-
-    // fill voltage buffer with initial values
-    uint16_t currentVoltage = analogRead(SUN.getADCPin(nodeNumber));
-    for (int i = 0; i < NUMBER_OF_READS; i++)
-    {
-        voltage_buffer[i] = currentVoltage * SUN.getVoltageIndexer(nodeNumber) / 100;
-    }
-
-    if (esp_now_init() != ESP_OK)
-    {
-        Serial.println("ESP-NOW init failed");
-        return;
-    }
-}
-
-void SUNClass::OTAbegin(uint8_t nodeNumber)
-{
-    WiFi.begin(ssid, password);
-    Serial.print("Connecting");
-
-    uint8_t retryCount = 0;
-
-    // while (WiFi.status() != WL_CONNECTED)
-    // {
-    //     delay(500);
-    //     Serial.print(".");
-    //     retryCount++;
-    //     if (retryCount > 10)
-    //     {
-    //         Serial.println("Failed to connect to WiFi");
-    //         break;
-    //     }
-    // }
-
     if (!MDNS.begin(SUN.getHostName(nodeNumber).c_str()))
     {
         Serial.println("Error starting mDNS");
@@ -119,6 +79,26 @@ void SUNClass::OTAbegin(uint8_t nodeNumber)
                        { Serial.printf("Error[%u]\n", error); });
 
     ArduinoOTA.begin();
+
+    Serial.print("Device is being configured as number ");
+    Serial.print(String(nodeNumber));
+    Serial.print(" with hostname ");
+    Serial.println(SUN.getHostName(nodeNumber));
+
+    pinMode(SUN.getADCPin(nodeNumber), INPUT);
+
+    // fill voltage buffer with initial values
+    uint16_t currentVoltage = analogRead(SUN.getADCPin(nodeNumber));
+    for (int i = 0; i < NUMBER_OF_READS; i++)
+    {
+        voltage_buffer[i] = currentVoltage * SUN.getVoltageIndexer(nodeNumber) / 100;
+    }
+
+    if (esp_now_init() != ESP_OK)
+    {
+        Serial.println("ESP-NOW init failed");
+        return;
+    }
 }
 
 String SUNClass::getHostName(uint8_t nodeNumber)
