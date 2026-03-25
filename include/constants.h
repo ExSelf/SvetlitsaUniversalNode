@@ -14,4 +14,3 @@ extern unsigned long lastCheckVoltage;
 
 #define VOLTAGE_CHECK_INTERVAL 10
 #define STATUS_SEND_INTERVAL 25
-#define NUMBER_OF_READS 100

@@ -9,7 +9,7 @@
 
 extern uint8_t voltageReadCounter;
 extern uint16_t voltage;
-extern uint16_t voltage_buffer[NUMBER_OF_READS];
+extern uint16_t voltageBuffer[256];
 
 class SUNClass {
 public:

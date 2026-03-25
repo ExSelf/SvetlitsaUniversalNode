@@ -7,7 +7,7 @@
 
 uint8_t voltageReadCounter = 0;
 uint16_t voltage;
-uint16_t voltage_buffer[NUMBER_OF_READS];
+uint16_t voltageBuffer[256];
 
 // Create global instance
 SUNClass SUN;
@@ -156,16 +156,14 @@ uint8_t SUNClass::getADCPin(uint8_t nodeNumber)
 uint8_t SUNClass::getCharge(uint8_t nodeNumber)
 {
     voltageReadCounter++;
-    if (voltageReadCounter == NUMBER_OF_READS)
-        voltageReadCounter = 0;
-    voltage_buffer[voltageReadCounter] = analogRead(SUN.getADCPin(nodeNumber)) * SUN.getVoltageIndexer(nodeNumber) / 100;
+    voltageBuffer[voltageReadCounter] = analogRead(SUN.getADCPin(nodeNumber)) * SUN.getVoltageIndexer(nodeNumber) / 100;
 
     uint16_t total = 0;
-    for (uint8_t i = 0; i < NUMBER_OF_READS; i++)
+    for (uint8_t i = 0; i < 256; i++)
     {
-        total += voltage_buffer[i];
+        total += voltageBuffer[i];
     }
-    voltage = total / NUMBER_OF_READS;
+    voltage = total / 256;
 
     uint8_t charge = constrain(map(voltage, SUN.getLowVoltage(nodeNumber), SUN.getHighVoltage(nodeNumber), 0, 100), 0, 100);
 
