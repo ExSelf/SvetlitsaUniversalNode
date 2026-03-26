@@ -1,8 +1,6 @@
 #include <Arduino.h>
 #include <ArduinoOTA.h>
 
-
-#include "config/constants.h"
 #include "config/globals.h"
 
 // Include main class
@@ -33,5 +31,6 @@ void loop()
   if (millis() - GLOBAL::lastCheckVoltage > GLOBAL::VOLTAGE_CHECK_INTERVAL * 100)
   {
     GLOBAL::lastCheckVoltage = millis();
+    SUN.getCharge(NodeNumber);
   }
 }
