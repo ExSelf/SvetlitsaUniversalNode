@@ -9,12 +9,7 @@
 #endif
 
 #include "SUN.h"
-
-uint8_t voltageReadCounter = 0;
-uint16_t voltage;
-uint16_t voltageBuffer[256];
-
-unsigned long lastCheckVoltage = 0;
+#include "config/globals.h"
 
 // Create global instance
 SUNClass SUN;
@@ -55,8 +50,8 @@ void SUNClass::setupNode(uint8_t nodeNumber)
 
     WiFi.softAPdisconnect(true);
     WiFi.mode(WIFI_STA);
-    esp_wifi_set_channel(DEFAULT_WIFI_CHANNEL, WIFI_SECOND_CHAN_NONE);
-    WiFi.begin(ssid, password);
+    esp_wifi_set_channel(GLOBAL::DEFAULT_WIFI_CHANNEL, WIFI_SECOND_CHAN_NONE);
+    WiFi.begin(GLOBAL::ssid, GLOBAL::password);
     WiFi.hostname(SUN.getHostName(nodeNumber).c_str());
 
     if (!MDNS.begin(SUN.getHostName(nodeNumber).c_str()))
@@ -99,7 +94,7 @@ void SUNClass::setupNode(uint8_t nodeNumber)
     uint16_t currentVoltage = analogRead(SUN.getADCPin(nodeNumber));
     for (int i = 0; i < 256; i++)
     {
-        voltageBuffer[i] = currentVoltage * SUN.getVoltageIndexer(nodeNumber) / 100;
+        GLOBAL::voltageBuffer[i] = currentVoltage * SUN.getVoltageIndexer(nodeNumber) / 100;
     }
 
     if (esp_now_init() != ESP_OK)
@@ -143,17 +138,17 @@ uint8_t SUNClass::getADCPin(uint8_t nodeNumber)
 
 uint8_t SUNClass::getCharge(uint8_t nodeNumber)
 {
-    voltageReadCounter++;
-    voltageBuffer[voltageReadCounter] = analogRead(SUN.getADCPin(nodeNumber)) * SUN.getVoltageIndexer(nodeNumber) / 100;
+    GLOBAL::voltageReadCounter++;
+    GLOBAL::voltageBuffer[GLOBAL::voltageReadCounter] = analogRead(SUN.getADCPin(nodeNumber)) * SUN.getVoltageIndexer(nodeNumber) / 100;
 
     uint16_t total = 0;
     for (uint8_t i = 0; i < 256; i++)
     {
-        total += voltageBuffer[i];
+        total += GLOBAL::voltageBuffer[i];
     }
-    voltage = total / 256;
+    GLOBAL::voltage = total / 256;
 
-    uint8_t charge = constrain(map(voltage, SUN.getLowVoltage(nodeNumber), SUN.getHighVoltage(nodeNumber), 0, 100), 0, 100);
+    uint8_t charge = constrain(map(GLOBAL::voltage, SUN.getLowVoltage(nodeNumber), SUN.getHighVoltage(nodeNumber), 0, 100), 0, 100);
 
     return charge;
 

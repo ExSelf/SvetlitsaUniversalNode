@@ -1,6 +1,10 @@
 #include <Arduino.h>
 #include <ArduinoOTA.h>
 
+
+#include "config/constants.h"
+#include "config/globals.h"
+
 // Include main class
 #include "SUN.h"
 
@@ -12,8 +16,8 @@ void setup()
 
   for (int i = 0; i < 8; i++)
   {
-    pinMode(NodeNumberPins[i], INPUT_PULLUP);
-    NodeNumber += (!digitalRead(NodeNumberPins[i]) * pow(2, i));
+    pinMode(GLOBAL::NodeNumberPins[i], INPUT_PULLUP);
+    NodeNumber += (!digitalRead(GLOBAL::NodeNumberPins[i]) * pow(2, i));
   }
 
   SUN.setupNode(NodeNumber);
@@ -26,8 +30,8 @@ void loop()
 {
   ArduinoOTA.handle();
 
-  if (millis() - lastCheckVoltage > VOLTAGE_CHECK_INTERVAL * 100)
+  if (millis() - GLOBAL::lastCheckVoltage > GLOBAL::VOLTAGE_CHECK_INTERVAL * 100)
   {
-    lastCheckVoltage = millis();
+    GLOBAL::lastCheckVoltage = millis();
   }
 }

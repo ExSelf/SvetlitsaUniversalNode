@@ -1,17 +1,9 @@
 #pragma once
 #include <stdint.h>
 
-#include "definitions.h"
-
 #include "../src/NodeSpecific/Origami.h"
 #include "../src/NodeSpecific/Solaris.h"
 #include "../src/NodeSpecific/MoonFaced.h"
-
-extern uint8_t voltageReadCounter;
-extern uint16_t voltage;
-extern uint16_t voltageBuffer[256];
-
-extern unsigned long lastCheckVoltage;
 
 class SUNClass {
 public:
