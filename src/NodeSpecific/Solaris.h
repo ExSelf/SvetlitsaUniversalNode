@@ -1,9 +1,21 @@
 #pragma once
 #include <stdint.h>
 
-class SolarisClass {
-public:
+namespace SOLARIS
+{
+    static constexpr uint16_t BREATHE_INTERVAL_1 = 250;
+    static constexpr uint16_t BREATHE_INTERVAL_2 = 2500;
+    static constexpr uint16_t BUTTON_PRESS_DELAY = 750;
 
+    static constexpr uint8_t INNER_PWM_PIN = 1;
+    static constexpr uint8_t MIDDLE_PWM_PIN = 2;
+    static constexpr uint8_t OUTER_PWM_PIN = 4;
+    static constexpr uint8_t HANDS_PWM_PIN = 6;
+}
+
+class SolarisClass
+{
+public:
     // Solaris Specific methods
     uint8_t getInnerStripPixelsQuantity(uint8_t nodeNumber);
     uint8_t getMiddleStripPixelsQuantity(uint8_t nodeNumber);
