@@ -1,11 +1,21 @@
+#ifndef ARDUINO_H
 #include <Arduino.h>
-#include <ESPmDNS.h>
-#include <WiFi.h>
-#include <esp_now.h>
-#include <esp_wifi.h>
+#endif
 
-#ifndef ARDUINO_OTA_H
+#ifndef ARDUINOOTA_H
 #include <ArduinoOTA.h>
+#endif
+
+#ifndef ESP_NOW_H
+#include <esp_now.h>
+#endif
+
+#ifndef ESP_WIFI_H
+#include <esp_wifi.h>
+#endif
+
+#ifndef ESP_MDNS_H
+#include <ESPmDNS.h>
 #endif
 
 #include "SUN.h"
@@ -45,7 +55,7 @@ void SUNClass::setupNode(uint8_t nodeNumber)
     }
     else if (nodeNumber <= 40) // MoonFaced
     {
-        // MoonFaced.setupNode(nodeNumber);
+        MoonFaced.setupNode(nodeNumber);
     }
 
     WiFi.softAPdisconnect(true);
@@ -152,7 +162,7 @@ uint8_t SUNClass::getCharge(uint8_t nodeNumber)
 
     return charge;
 
-    //bright = constrain(map(charge, 0, SAFE_CHARGE, MIN_BRIGHT, MAX_BRIGHT), MIN_BRIGHT, MAX_BRIGHT);
+    // bright = constrain(map(charge, 0, SAFE_CHARGE, MIN_BRIGHT, MAX_BRIGHT), MIN_BRIGHT, MAX_BRIGHT);
 }
 
 uint16_t SUNClass::getLowVoltage(uint8_t nodeNumber)
@@ -202,4 +212,69 @@ uint16_t SUNClass::getHighVoltage(uint8_t nodeNumber)
     default:
         return 65535;
     }
+}
+
+void SUNClass::sendStatus(uint8_t nodeNumber)
+{
+    uint8_t message[100];
+    message[0] = 0x01;        // Message type: status update
+    message[1] = GLOBAL::TTL; // Time to live
+    message[2] = nodeNumber;  // Node number
+
+    if (SUN.sendMessage(message, sizeof(message)))
+    {
+        Serial.println("Status message sent successfully");
+    }
+    else
+    {
+        Serial.println("Failed to send status message");
+    }
+}
+
+bool SUNClass::sendMessage(const uint8_t *payload, size_t payloadSize)
+{
+    static const uint8_t broadcastMac[6] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
+
+    if (payload == nullptr || payloadSize == 0)
+    {
+        Serial.println("ESP-NOW broadcast skipped: invalid payload");
+        return false;
+    }
+
+    if (payloadSize > ESP_NOW_MAX_DATA_LEN)
+    {
+        Serial.printf("ESP-NOW broadcast skipped: payload too large (%u > %u)\n", (unsigned int)payloadSize, ESP_NOW_MAX_DATA_LEN);
+        return false;
+    }
+
+    if (!esp_now_is_peer_exist(broadcastMac))
+    {
+        esp_now_peer_info_t peerInfo = {};
+        memcpy(peerInfo.peer_addr, broadcastMac, 6);
+        peerInfo.channel = GLOBAL::DEFAULT_WIFI_CHANNEL;
+        peerInfo.ifidx = WIFI_IF_STA;
+        peerInfo.encrypt = false;
+
+        esp_err_t addResult = esp_now_add_peer(&peerInfo);
+        if (addResult != ESP_OK)
+        {
+            Serial.printf("ESP-NOW add broadcast peer failed: %d\n", addResult);
+            return false;
+        }
+    }
+
+    esp_err_t sendResult = esp_now_send(broadcastMac, payload, payloadSize);
+    if (sendResult != ESP_OK)
+    {
+        Serial.printf("ESP-NOW broadcast send failed, err=%d\n", sendResult);
+        return false;
+    }
+
+    return true;
+}
+
+void SUNClass::parseReceviedData(const uint8_t * mac_addr, const uint8_t *incomingData, int len)
+{
+    // This function will be called when a message is received via ESP-NOW
+    // You can implement your message parsing logic here
 }

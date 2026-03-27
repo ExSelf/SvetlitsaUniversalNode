@@ -1,15 +1,6 @@
 #include <Arduino.h>
 #include "Solaris.h"
 
-// #define SOLARIS_BREATHE_INTERVAL_1 250
-// #define SOLARIS_BREATHE_INTERVAL_2 2500
-// #define SOLARIS_BUTTON_PRESS_DELAY 750
-
-// #define SOLARIS_INNER_PWM_PIN 1
-// #define SOLARIS_MIDDLE_PWM_PIN 2
-// #define SOLARIS_OUTER_PWM_PIN 4
-// #define SOLARIS_HANDS_PWM_PIN 6
-
 uint8_t SolarisClass::getInnerStripPixelsQuantity(uint8_t nodeNumber)
 {
   switch (nodeNumber)

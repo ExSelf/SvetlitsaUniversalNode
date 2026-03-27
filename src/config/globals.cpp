@@ -10,6 +10,9 @@ namespace GLOBAL
 
     char *hostName;
 
+    uint8_t TTL;
+    int32_t globalTimeOffset;
+
     uint8_t command;
     uint8_t parameter;
     uint8_t constantCommands[12];
@@ -19,5 +22,5 @@ namespace GLOBAL
     uint16_t voltageBuffer[256];
 
     uint32_t lastCheckVoltage = 0;
-
+    uint32_t lastSendStatus = 0;
 }

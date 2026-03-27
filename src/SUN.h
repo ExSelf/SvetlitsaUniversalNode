@@ -5,7 +5,8 @@
 #include "../src/NodeSpecific/Solaris.h"
 #include "../src/NodeSpecific/MoonFaced.h"
 
-class SUNClass {
+class SUNClass
+{
 public:
     uint16_t globalTime;
 
@@ -17,6 +18,9 @@ public:
     uint8_t getCharge(uint8_t nodeNumber);
     uint16_t getLowVoltage(uint8_t nodeNumber);
     uint16_t getHighVoltage(uint8_t nodeNumber);
+    void sendStatus(uint8_t nodeNumber);
+    bool sendMessage(const uint8_t *payload, size_t payloadSize);
+    void parseReceviedData(const uint8_t * mac_addr, const uint8_t *incomingData, int len);
 };
 
 extern SUNClass SUN;

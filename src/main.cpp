@@ -1,4 +1,8 @@
 #include <Arduino.h>
+#include <ESPmDNS.h>
+#include <WiFi.h>
+#include <esp_now.h>
+#include <esp_wifi.h>
 #include <ArduinoOTA.h>
 
 #include "config/globals.h"
@@ -7,6 +11,11 @@
 #include "SUN.h"
 
 uint8_t NodeNumber = 0;
+
+void OnDataRecv(const uint8_t *mac, const uint8_t *incomingData, int len)
+{
+  SUN.parseReceviedData(mac, incomingData, len);
+}
 
 void setup()
 {
@@ -22,15 +31,23 @@ void setup()
 
   Serial.print("Configured and starting as ");
   Serial.println(SUN.getHostName(NodeNumber));
+
+  esp_now_register_recv_cb(esp_now_recv_cb_t(OnDataRecv));
 }
 
 void loop()
 {
   ArduinoOTA.handle();
 
-  if (millis() - GLOBAL::lastCheckVoltage > GLOBAL::VOLTAGE_CHECK_INTERVAL * 100)
+  if (millis() - GLOBAL::lastCheckVoltage > GLOBAL::VOLTAGE_CHECK_INTERVAL)
   {
     GLOBAL::lastCheckVoltage = millis();
     SUN.getCharge(NodeNumber);
+  }
+
+  if (millis() - GLOBAL::lastSendStatus > GLOBAL::STATUS_SEND_INTERVAL)
+  {
+    GLOBAL::lastSendStatus = millis();
+    SUN.sendStatus(NodeNumber);
   }
 }
