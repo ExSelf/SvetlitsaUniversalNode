@@ -23,6 +23,7 @@
 
 // Create global instance
 SUNClass SUN;
+SUNClass::Packet packet;
 
 uint16_t SUNClass::getVoltageIndexer(uint8_t nodeNumber)
 {

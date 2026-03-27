@@ -10,7 +10,7 @@ namespace GLOBAL
 
     char *hostName;
 
-    uint8_t TTL;
+    uint8_t TTL = 3;
     int32_t globalTimeOffset;
 
     uint8_t command;
