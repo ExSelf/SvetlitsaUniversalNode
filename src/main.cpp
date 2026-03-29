@@ -50,4 +50,11 @@ void loop()
     GLOBAL::lastSendStatus = millis();
     SUN.sendStatus(NodeNumber);
   }
+
+  if(millis() - GLOBAL::lastTick > GLOBAL::TICK_INTERVAL)
+  {
+    GLOBAL::lastTick = millis();
+    bool ledState = digitalRead(GLOBAL::BUILT_IN_LED_PIN);
+    digitalWrite(GLOBAL::BUILT_IN_LED_PIN, !ledState);
+  }
 }

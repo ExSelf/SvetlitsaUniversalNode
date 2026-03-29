@@ -10,13 +10,18 @@ namespace SOLARIS
     static constexpr uint8_t INNER_PWM_PIN = 1;
     static constexpr uint8_t MIDDLE_PWM_PIN = 2;
     static constexpr uint8_t OUTER_PWM_PIN = 4;
-    static constexpr uint8_t HANDS_PWM_PIN = 6;
+    static constexpr uint8_t EXTRA_PWM_PIN = 6;
 }
 
 class SolarisClass
 {
 public:
     // Solaris Specific methods
+    uint8_t getInnerDataPin(uint8_t nodeNumber);
+    uint8_t getMiddleDataPin(uint8_t nodeNumber);
+    uint8_t getOuterDataPin(uint8_t nodeNumber);
+    uint8_t getExtraDataPin(uint8_t nodeNumber);
+
     uint8_t getInnerStripPixelsQuantity(uint8_t nodeNumber);
     uint8_t getMiddleStripPixelsQuantity(uint8_t nodeNumber);
     uint8_t getOuterStripPixelsQuantity(uint8_t nodeNumber);

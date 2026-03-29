@@ -100,6 +100,7 @@ void SUNClass::setupNode(uint8_t nodeNumber)
     Serial.println(SUN.getHostName(nodeNumber));
 
     pinMode(SUN.getADCPin(nodeNumber), INPUT);
+    pinMode(GLOBAL::BUILT_IN_LED_PIN, OUTPUT);
 
     // fill voltage buffer with initial values
     uint16_t currentVoltage = analogRead(SUN.getADCPin(nodeNumber));

@@ -23,4 +23,5 @@ namespace GLOBAL
 
     uint32_t lastCheckVoltage = 0;
     uint32_t lastSendStatus = 0;
+    uint32_t lastTick = 0;
 }

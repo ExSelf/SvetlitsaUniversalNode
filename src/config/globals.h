@@ -3,9 +3,12 @@
 
 namespace GLOBAL
 {
+    static constexpr uint8_t BUILT_IN_LED_PIN = 15;
 
     static constexpr uint8_t VOLTAGE_CHECK_INTERVAL = 10;
     static constexpr uint8_t STATUS_SEND_INTERVAL = 25;
+    static constexpr uint16_t TICK_INTERVAL = 500;
+
     static constexpr uint8_t DEFAULT_WIFI_CHANNEL = 13;
 
     extern uint8_t TTL;
@@ -17,6 +20,7 @@ namespace GLOBAL
 
     extern uint32_t lastCheckVoltage;
     extern uint32_t lastSendStatus;
+    extern uint32_t lastTick;
 
     extern const uint8_t NodeNumberPins[8];
     extern const char *ssid;
