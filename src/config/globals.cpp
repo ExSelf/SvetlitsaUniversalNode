@@ -12,6 +12,7 @@ namespace GLOBAL
 
     uint8_t TTL = 3;
     int32_t globalTimeOffset;
+    uint32_t globalTime;
 
     uint8_t command;
     uint8_t parameter;
@@ -23,5 +24,6 @@ namespace GLOBAL
 
     uint32_t lastCheckVoltage = 0;
     uint32_t lastSendStatus = 0;
+
     uint32_t lastTick = 0;
 }

@@ -12,6 +12,7 @@
 
 uint8_t NodeNumber = 0;
 
+
 void OnDataRecv(const uint8_t *mac, const uint8_t *incomingData, int len)
 {
   SUN.parseReceviedData(mac, incomingData, len);
@@ -27,17 +28,30 @@ void setup()
     NodeNumber += (!digitalRead(GLOBAL::NodeNumberPins[i]) * pow(2, i));
   }
 
+  Serial.print("Starting configurations as ");
+  Serial.println(SUN.getHostName(NodeNumber));
+
   SUN.setupNode(NodeNumber);
 
   Serial.print("Configured and starting as ");
   Serial.println(SUN.getHostName(NodeNumber));
 
-  esp_now_register_recv_cb(esp_now_recv_cb_t(OnDataRecv));
+  esp_err_t registerResult = esp_now_register_recv_cb(OnDataRecv);
+  if (registerResult != ESP_OK)
+  {
+    Serial.printf("ESP-NOW recv callback registration failed: %d\n", registerResult);
+  }
+  else
+  {
+    Serial.println("ESP-NOW recv callback registered");
+  }
 }
 
 void loop()
 {
   ArduinoOTA.handle();
+
+  GLOBAL::TTL = millis() + GLOBAL::globalTimeOffset;
 
   if (millis() - GLOBAL::lastCheckVoltage > GLOBAL::VOLTAGE_CHECK_INTERVAL)
   {
@@ -51,10 +65,10 @@ void loop()
     SUN.sendStatus(NodeNumber);
   }
 
-  if(millis() - GLOBAL::lastTick > GLOBAL::TICK_INTERVAL)
+  if (millis() - GLOBAL::lastTick > GLOBAL::TICK_INTERVAL)
   {
     GLOBAL::lastTick = millis();
-    bool ledState = digitalRead(GLOBAL::BUILT_IN_LED_PIN);
-    digitalWrite(GLOBAL::BUILT_IN_LED_PIN, !ledState);
+    bool isTickLEDOn = digitalRead(GLOBAL::BUILT_IN_LED_PIN);
+    digitalWrite(GLOBAL::BUILT_IN_LED_PIN, !isTickLEDOn);
   }
 }

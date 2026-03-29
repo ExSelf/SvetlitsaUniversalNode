@@ -101,6 +101,7 @@ void SUNClass::setupNode(uint8_t nodeNumber)
 
     pinMode(SUN.getADCPin(nodeNumber), INPUT);
     pinMode(GLOBAL::BUILT_IN_LED_PIN, OUTPUT);
+    digitalWrite(GLOBAL::BUILT_IN_LED_PIN, HIGH);
 
     // fill voltage buffer with initial values
     uint16_t currentVoltage = analogRead(SUN.getADCPin(nodeNumber));
@@ -153,8 +154,8 @@ uint8_t SUNClass::getCharge(uint8_t nodeNumber)
     GLOBAL::voltageReadCounter++;
     GLOBAL::voltageBuffer[GLOBAL::voltageReadCounter] = analogRead(SUN.getADCPin(nodeNumber)) * SUN.getVoltageIndexer(nodeNumber) / 100;
 
-    uint16_t total = 0;
-    for (uint8_t i = 0; i < 256; i++)
+    uint32_t total = 0;
+    for (uint16_t i = 0; i <= 255; i++)
     {
         total += GLOBAL::voltageBuffer[i];
     }
@@ -222,10 +223,11 @@ void SUNClass::sendStatus(uint8_t nodeNumber)
     message[0] = 0x01;        // Message type: status update
     message[1] = GLOBAL::TTL; // Time to live
     message[2] = nodeNumber;  // Node number
+    
 
     if (SUN.sendMessage(message, sizeof(message)))
     {
-        Serial.println("Status message sent successfully");
+        // Serial.println("Status message sent successfully");
     }
     else
     {
@@ -253,6 +255,7 @@ bool SUNClass::sendMessage(const uint8_t *payload, size_t payloadSize)
     {
         esp_now_peer_info_t peerInfo = {};
         memcpy(peerInfo.peer_addr, broadcastMac, 6);
+        // Keep channel in sync with current STA channel (important when WiFi is connected to AP).
         peerInfo.channel = GLOBAL::DEFAULT_WIFI_CHANNEL;
         peerInfo.ifidx = WIFI_IF_STA;
         peerInfo.encrypt = false;
@@ -275,8 +278,11 @@ bool SUNClass::sendMessage(const uint8_t *payload, size_t payloadSize)
     return true;
 }
 
-void SUNClass::parseReceviedData(const uint8_t * mac_addr, const uint8_t *incomingData, int len)
+void SUNClass::parseReceviedData(const uint8_t *mac_addr, const uint8_t *incomingData, int len)
 {
-    // This function will be called when a message is received via ESP-NOW
-    // You can implement your message parsing logic here
+    if (len == 100)
+    {
+        if (incomingData[])
+        GLOBAL::globalTimeOffset = GLOBAL::globalTime - millis();
+    }
 }
