@@ -9,7 +9,7 @@ namespace GLOBAL
     static constexpr uint8_t STATUS_SEND_INTERVAL = 25;
     static constexpr uint16_t TICK_INTERVAL = 500;
 
-    static constexpr uint8_t DEFAULT_WIFI_CHANNEL = 13;
+    static constexpr uint8_t DEFAULT_WIFI_CHANNEL = 14;
 
     extern uint8_t TTL;
     extern int32_t globalTimeOffset;

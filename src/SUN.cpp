@@ -327,10 +327,9 @@ void SUNClass::parseReceviedData(const uint8_t *mac_addr, const uint8_t *incomin
         Serial.printf("Time offset adjusted: %d ms\n", GLOBAL::globalTimeOffset);
     }
     Serial.printf(
-        "ESP-NOW RX from %02X:%02X:%02X:%02X:%02X:%02X size=%u type=%u ttl=%u node=%u time=%lu cmdTs=%lu V=%u C=%u cmd=%u param=%u payload=%u\n",
+        "ESP-NOW RX from %02X:%02X:%02X:%02X:%02X:%02X size=%u type=%u ttl=%u node=%u time=%lu local Global time=%lu\n",
         mac_addr[0], mac_addr[1], mac_addr[2], mac_addr[3], mac_addr[4], mac_addr[5], (unsigned int)len,
         receivedPacket.type, receivedPacket.ttl, receivedPacket.node,
         (unsigned long)receivedPacket.global_time, (unsigned long)receivedPacket.command_timestamp,
-        receivedPacket.voltage, receivedPacket.charge,
-        receivedPacket.command, receivedPacket.parameter, receivedPacket.payload_size);
+        GLOBAL::globalTime);
 }
