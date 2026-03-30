@@ -17,6 +17,7 @@ namespace GLOBAL
 
     extern uint8_t voltageReadCounter;
     extern uint16_t voltage;
+    extern uint8_t charge;
     extern uint16_t voltageBuffer[256];
 
     extern uint32_t lastCheckVoltage;
@@ -30,4 +31,5 @@ namespace GLOBAL
     extern uint8_t command;
     extern uint8_t parameter;
     extern uint8_t constantCommands[12];
+    extern uint32_t startMillis;
 }

@@ -1,4 +1,5 @@
 #pragma once
+#include <Arduino.h>
 #include <stdint.h>
 
 #include "../src/NodeSpecific/Origami.h"
@@ -19,15 +20,16 @@ public:
         uint32_t global_time;
         uint32_t command_timestamp;
 
+        uint16_t voltage;
         uint8_t charge;
 
         uint8_t command;
         uint8_t parameter;
 
-        uint8_t constant_commands[12];
+        uint8_t constantCommands[12];
 
         uint8_t payload_size;
-        uint8_t payload[72];
+        uint8_t payload[71];
 
     } Packet;
 

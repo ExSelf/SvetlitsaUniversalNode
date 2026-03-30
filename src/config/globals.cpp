@@ -17,9 +17,11 @@ namespace GLOBAL
     uint8_t command;
     uint8_t parameter;
     uint8_t constantCommands[12];
+    uint32_t startMillis;
 
     uint8_t voltageReadCounter;
     uint16_t voltage;
+    uint8_t charge;
     uint16_t voltageBuffer[256];
 
     uint32_t lastCheckVoltage = 0;

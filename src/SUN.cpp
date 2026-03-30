@@ -20,6 +20,7 @@
 
 #include "SUN.h"
 #include "config/globals.h"
+#include "string.h"
 
 // Create global instance
 SUNClass SUN;
@@ -219,13 +220,31 @@ uint16_t SUNClass::getHighVoltage(uint8_t nodeNumber)
 
 void SUNClass::sendStatus(uint8_t nodeNumber)
 {
-    uint8_t message[100];
-    message[0] = 0x01;        // Message type: status update
-    message[1] = GLOBAL::TTL; // Time to live
-    message[2] = nodeNumber;  // Node number
-    
+    Packet packet{}; // ✅ zero-initialize everything
 
-    if (SUN.sendMessage(message, sizeof(message)))
+    // ===== HEADER =====
+    packet.type = 1;          // STATUS
+    packet.ttl = GLOBAL::TTL; // or whatever your logic is
+    packet.node = nodeNumber;
+
+    packet.global_time = GLOBAL::globalTime;
+    packet.command_timestamp = GLOBAL::startMillis;
+
+    packet.voltage = GLOBAL::voltage;
+    packet.charge = GLOBAL::charge;
+
+    packet.command = GLOBAL::command;
+    packet.parameter = GLOBAL::parameter;
+
+    // ===== COPY ARRAY =====
+    memcpy(packet.constantCommands,
+           GLOBAL::constantCommands,
+           sizeof(packet.constantCommands));
+
+    // ===== PAYLOAD (optional for now) =====
+    packet.payload_size = 0;
+
+    if (SUN.sendMessage(reinterpret_cast<const uint8_t *>(&packet), sizeof(packet)))
     {
         // Serial.println("Status message sent successfully");
     }
@@ -280,9 +299,42 @@ bool SUNClass::sendMessage(const uint8_t *payload, size_t payloadSize)
 
 void SUNClass::parseReceviedData(const uint8_t *mac_addr, const uint8_t *incomingData, int len)
 {
-    if (len == 100)
+    if (mac_addr == nullptr || incomingData == nullptr || len <= 0)
     {
-        if (incomingData[])
-        GLOBAL::globalTimeOffset = GLOBAL::globalTime - millis();
+        return;
     }
+
+    if (len != (int)sizeof(Packet))
+    {
+        // Serial.printf("ESP-NOW RX too small: %d (need %u)\n", len, (unsigned int)sizeof(Packet));
+        return;
+    }
+
+    Packet receivedPacket{};
+    memcpy(&receivedPacket, incomingData, sizeof(Packet));
+
+    if (receivedPacket.payload_size > sizeof(receivedPacket.payload))
+    {
+       // Serial.printf("ESP-NOW RX invalid payload_size: %u\n", receivedPacket.payload_size);
+        return;
+    }
+
+    // Read and apply fields from received packet.
+    // GLOBAL::TTL = receivedPacket.ttl;
+    // GLOBAL::command = receivedPacket.command;
+    // GLOBAL::parameter = receivedPacket.parameter;
+    // GLOBAL::voltage = receivedPacket.voltage;
+    // GLOBAL::charge = receivedPacket.charge;
+    // memcpy(GLOBAL::constantCommands, receivedPacket.constantCommands, sizeof(GLOBAL::constantCommands));
+
+    // Keep local time aligned with sender's global time.
+    GLOBAL::globalTimeOffset = (int32_t)receivedPacket.global_time - (int32_t)millis();
+
+    Serial.printf(
+        "ESP-NOW RX from %02X:%02X:%02X:%02X:%02X:%02X size=%utype=%u ttl=%u node=%u time=%lu cmdTs=%lu V=%u C=%u cmd=%u param=%u payload=%u\n",
+        mac_addr[0], mac_addr[1], mac_addr[2], mac_addr[3], mac_addr[4], mac_addr[5], (unsigned int)len,
+        receivedPacket.type, receivedPacket.ttl, receivedPacket.node,
+        (unsigned long)receivedPacket.global_time, (unsigned long)receivedPacket.command_timestamp,
+        receivedPacket.voltage, receivedPacket.charge,
+        receivedPacket.command, receivedPacket.parameter, receivedPacket.payload_size);
 }

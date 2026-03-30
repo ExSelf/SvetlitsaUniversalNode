@@ -4,6 +4,9 @@
 #include <esp_now.h>
 #include <esp_wifi.h>
 #include <ArduinoOTA.h>
+#if __has_include(<esp_idf_version.h>)
+#include <esp_idf_version.h>
+#endif
 
 #include "config/globals.h"
 
@@ -12,11 +15,22 @@
 
 uint8_t NodeNumber = 0;
 
+#if defined(ESP_IDF_VERSION_MAJOR) && ESP_IDF_VERSION_MAJOR >= 5
+void OnDataRecv(const esp_now_recv_info_t *recvInfo, const uint8_t *incomingData, int len)
+{
+  if (recvInfo == nullptr)
+  {
+    return;
+  }
 
+  SUN.parseReceviedData(recvInfo->src_addr, incomingData, len);
+}
+#else
 void OnDataRecv(const uint8_t *mac, const uint8_t *incomingData, int len)
 {
   SUN.parseReceviedData(mac, incomingData, len);
 }
+#endif
 
 void setup()
 {
@@ -25,7 +39,7 @@ void setup()
   for (int i = 0; i < 8; i++)
   {
     pinMode(GLOBAL::NodeNumberPins[i], INPUT_PULLUP);
-    NodeNumber += (!digitalRead(GLOBAL::NodeNumberPins[i]) * pow(2, i));
+    NodeNumber |= (uint8_t)((!digitalRead(GLOBAL::NodeNumberPins[i])) << i);
   }
 
   Serial.print("Starting configurations as ");
@@ -51,12 +65,12 @@ void loop()
 {
   ArduinoOTA.handle();
 
-  GLOBAL::TTL = millis() + GLOBAL::globalTimeOffset;
+  GLOBAL::globalTime = millis() + GLOBAL::globalTimeOffset;
 
   if (millis() - GLOBAL::lastCheckVoltage > GLOBAL::VOLTAGE_CHECK_INTERVAL)
   {
     GLOBAL::lastCheckVoltage = millis();
-    SUN.getCharge(NodeNumber);
+    GLOBAL::charge = SUN.getCharge(NodeNumber);
   }
 
   if (millis() - GLOBAL::lastSendStatus > GLOBAL::STATUS_SEND_INTERVAL)
@@ -65,9 +79,9 @@ void loop()
     SUN.sendStatus(NodeNumber);
   }
 
-  if (millis() - GLOBAL::lastTick > GLOBAL::TICK_INTERVAL)
+  if (GLOBAL::globalTime - GLOBAL::lastTick > GLOBAL::TICK_INTERVAL)
   {
-    GLOBAL::lastTick = millis();
+    GLOBAL::lastTick = GLOBAL::globalTime;
     bool isTickLEDOn = digitalRead(GLOBAL::BUILT_IN_LED_PIN);
     digitalWrite(GLOBAL::BUILT_IN_LED_PIN, !isTickLEDOn);
   }
