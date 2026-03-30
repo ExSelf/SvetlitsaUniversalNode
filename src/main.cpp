@@ -83,7 +83,7 @@ void loop()
   {
     GLOBAL::lastTick = GLOBAL::globalTime;
     uint32_t phase = (GLOBAL::globalTime / GLOBAL::TICK_INTERVAL) & 1;
-    digitalWrite(GLOBAL::BUILT_IN_LED_PIN, phase ? HIGH : LOW);
+    analogWrite(GLOBAL::BUILT_IN_LED_PIN, phase ? 4 : 0);
 
     // Serial.printf("Tick\n");
   }
