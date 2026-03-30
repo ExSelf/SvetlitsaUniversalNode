@@ -82,7 +82,9 @@ void loop()
   if (GLOBAL::globalTime - GLOBAL::lastTick > GLOBAL::TICK_INTERVAL)
   {
     GLOBAL::lastTick = GLOBAL::globalTime;
-    bool isTickLEDOn = digitalRead(GLOBAL::BUILT_IN_LED_PIN);
-    digitalWrite(GLOBAL::BUILT_IN_LED_PIN, !isTickLEDOn);
+    uint32_t phase = (GLOBAL::globalTime / GLOBAL::TICK_INTERVAL) & 1;
+    digitalWrite(GLOBAL::BUILT_IN_LED_PIN, phase ? HIGH : LOW);
+
+    // Serial.printf("Tick\n");
   }
 }

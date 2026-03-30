@@ -306,18 +306,12 @@ void SUNClass::parseReceviedData(const uint8_t *mac_addr, const uint8_t *incomin
 
     if (len != (int)sizeof(Packet))
     {
-        // Serial.printf("ESP-NOW RX too small: %d (need %u)\n", len, (unsigned int)sizeof(Packet));
+        Serial.printf("ESP-NOW RX too small: %d (need %u)\n", len, (unsigned int)sizeof(Packet));
         return;
     }
 
     Packet receivedPacket{};
     memcpy(&receivedPacket, incomingData, sizeof(Packet));
-
-    if (receivedPacket.payload_size > sizeof(receivedPacket.payload))
-    {
-       // Serial.printf("ESP-NOW RX invalid payload_size: %u\n", receivedPacket.payload_size);
-        return;
-    }
 
     // Read and apply fields from received packet.
     // GLOBAL::TTL = receivedPacket.ttl;
@@ -327,9 +321,11 @@ void SUNClass::parseReceviedData(const uint8_t *mac_addr, const uint8_t *incomin
     // GLOBAL::charge = receivedPacket.charge;
     // memcpy(GLOBAL::constantCommands, receivedPacket.constantCommands, sizeof(GLOBAL::constantCommands));
 
-    // Keep local time aligned with sender's global time.
-    GLOBAL::globalTimeOffset = (int32_t)receivedPacket.global_time - (int32_t)millis();
-
+    if (GLOBAL::globalTimeOffset < receivedPacket.global_time - millis())
+    {
+        GLOBAL::globalTimeOffset = (int32_t)receivedPacket.global_time - (int32_t)millis();
+        Serial.printf("Time offset adjusted: %d ms\n", GLOBAL::globalTimeOffset);
+    }
     Serial.printf(
         "ESP-NOW RX from %02X:%02X:%02X:%02X:%02X:%02X size=%utype=%u ttl=%u node=%u time=%lu cmdTs=%lu V=%u C=%u cmd=%u param=%u payload=%u\n",
         mac_addr[0], mac_addr[1], mac_addr[2], mac_addr[3], mac_addr[4], mac_addr[5], (unsigned int)len,
