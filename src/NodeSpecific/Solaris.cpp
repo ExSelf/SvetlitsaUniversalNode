@@ -109,7 +109,7 @@ uint8_t SolarisClass::getInnerStripPixelsQuantity(uint8_t nodeNumber)
     return 31;
 
   case 23:
-    return 55;
+    return 34;
 
   case 24:
     return 55;
@@ -133,7 +133,7 @@ uint8_t SolarisClass::getMiddleStripPixelsQuantity(uint8_t nodeNumber)
     return 29;
 
   case 23:
-    return 29;
+    return 30;
 
   case 24:
     return 62;
@@ -157,7 +157,7 @@ uint8_t SolarisClass::getOuterStripPixelsQuantity(uint8_t nodeNumber)
     return 98;
 
   case 23:
-    return 68;
+    return 98;
 
   case 24:
     return 68;
