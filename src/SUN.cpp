@@ -227,8 +227,8 @@ void SUNClass::sendStatus(uint8_t nodeNumber)
     packet.ttl = GLOBAL::TTL; // or whatever your logic is
     packet.node = nodeNumber;
 
-    packet.global_time = GLOBAL::globalTime;
-    packet.command_timestamp = GLOBAL::startMillis;
+    packet.globalTime = SUN.getGlobalTime();
+    packet.commandTimestamp = GLOBAL::startMillis;
 
     packet.voltage = GLOBAL::voltage;
     packet.charge = GLOBAL::charge;
@@ -321,15 +321,18 @@ void SUNClass::parseReceviedData(const uint8_t *mac_addr, const uint8_t *incomin
     // GLOBAL::charge = receivedPacket.charge;
     // memcpy(GLOBAL::constantCommands, receivedPacket.constantCommands, sizeof(GLOBAL::constantCommands));
 
-    if (GLOBAL::globalTimeOffset < receivedPacket.global_time - millis())
+    if (GLOBAL::globalTimeOffset < receivedPacket.globalTime - millis())
     {
-        GLOBAL::globalTimeOffset = (int32_t)receivedPacket.global_time - (int32_t)millis();
+        GLOBAL::globalTimeOffset = (int32_t)receivedPacket.globalTime - (int32_t)millis();
         Serial.printf("Time offset adjusted: %d ms\n", GLOBAL::globalTimeOffset);
     }
     Serial.printf(
         "ESP-NOW RX from %02X:%02X:%02X:%02X:%02X:%02X size=%u type=%u ttl=%u node=%u time=%lu local Global time=%lu\n",
         mac_addr[0], mac_addr[1], mac_addr[2], mac_addr[3], mac_addr[4], mac_addr[5], (unsigned int)len,
-        receivedPacket.type, receivedPacket.ttl, receivedPacket.node,
-        (unsigned long)receivedPacket.global_time, (unsigned long)receivedPacket.command_timestamp,
-        GLOBAL::globalTime);
+        receivedPacket.type, receivedPacket.ttl, receivedPacket.node, (unsigned long)receivedPacket.globalTime, (unsigned long)getGlobalTime());
+}
+
+uint32_t SUNClass::getGlobalTime()
+{
+    return millis() + GLOBAL::globalTimeOffset;
 }

@@ -65,8 +65,6 @@ void loop()
 {
   ArduinoOTA.handle();
 
-  GLOBAL::globalTime = millis() + GLOBAL::globalTimeOffset;
-
   if (millis() - GLOBAL::lastCheckVoltage > GLOBAL::VOLTAGE_CHECK_INTERVAL)
   {
     GLOBAL::lastCheckVoltage = millis();
@@ -79,10 +77,10 @@ void loop()
     SUN.sendStatus(NodeNumber);
   }
 
-  if (GLOBAL::globalTime - GLOBAL::lastTick > GLOBAL::TICK_INTERVAL)
+  if (SUN.getGlobalTime() - GLOBAL::lastTick > GLOBAL::TICK_INTERVAL)
   {
-    GLOBAL::lastTick = GLOBAL::globalTime;
-    uint32_t phase = (GLOBAL::globalTime / GLOBAL::TICK_INTERVAL) & 1;
+    GLOBAL::lastTick = SUN.getGlobalTime();
+    uint32_t phase = (SUN.getGlobalTime() / GLOBAL::TICK_INTERVAL) & 1;
     analogWrite(GLOBAL::BUILT_IN_LED_PIN, phase ? 4 : 0);
 
     // Serial.printf("Tick\n");

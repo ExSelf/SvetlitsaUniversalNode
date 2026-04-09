@@ -13,7 +13,6 @@ namespace GLOBAL
 
     extern uint8_t TTL;
     extern int32_t globalTimeOffset;
-    extern uint32_t globalTime;
 
     extern uint8_t voltageReadCounter;
     extern uint16_t voltage;

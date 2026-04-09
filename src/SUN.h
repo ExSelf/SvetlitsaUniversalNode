@@ -17,8 +17,8 @@ public:
         uint8_t ttl;
         uint8_t node;
 
-        uint32_t global_time;
-        uint32_t command_timestamp;
+        uint32_t globalTime;
+        uint32_t commandTimestamp;
 
         uint16_t voltage;
         uint8_t charge;
@@ -44,6 +44,7 @@ public:
     void sendStatus(uint8_t nodeNumber);
     bool sendMessage(const uint8_t *payload, size_t payloadSize);
     void parseReceviedData(const uint8_t *mac_addr, const uint8_t *incomingData, int len);
+    uint32_t getGlobalTime();
 };
 
 extern SUNClass SUN;
